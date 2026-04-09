@@ -1,40 +1,60 @@
 let habits = [];
+let currentFilter = "all";
 
 const habitInput = document.getElementById("habitInput");
 const addBtn = document.getElementById("addBtn");
 const totalSpan = document.getElementById("total");
 const habitList = document.getElementById("habitList");
 const deleteBtn = document.getElementById("deleteBtn");
+const allBtn = document.getElementById("allBtn");
+const pendingBtn = document.getElementById("pendingBtn");
+const completedBtn = document.getElementById("completedBtn");
 
 //function to render expenses but with foreach loop instead of for loop
-function renderHabits () {
+function renderHabits() {
   habitList.innerHTML = "";
+  let filteredHabits = habits;
 
-  habits.forEach(function(habit, index) {
+  if (currentFilter === "pending") {
+    filteredHabits = habits.filter(function(habit) {
+      return habit.completed === false;
+    });
+  }
+
+  if (currentFilter === "completed") {
+    filteredHabits = habits.filter(function(habit) {
+      return habit.completed === true;
+    });
+  }
+
+  filteredHabits.forEach(function(habit) {
+    const realIndex = habits.indexOf(habit);
+
     const li = document.createElement("li");
-    //logic of delete button
     const delHabit = document.createElement("button");
+
     delHabit.textContent = "Delete";
-    delHabit.addEventListener("click", function(event) {      
+    delHabit.addEventListener("click", function(event) {
       event.stopPropagation();
-      habits.splice(index,1);
+      habits.splice(realIndex, 1);
       totalSpan.textContent = habits.length;
       saveHabits();
       renderHabits();
     });
-    //text of <li>
+
     li.textContent = `Habit: ${habit.name} - ${habit.completed ? "Done" : "Pending"}`;
-    //mark complete habit.
+
     if (habit.completed) {
       li.style.textDecoration = "line-through";
       li.style.color = "gray";
     }
 
-    li.dataset.index = index;
+    li.dataset.index = realIndex;
     li.appendChild(delHabit);
     habitList.appendChild(li);
   });
 }
+
 //function to mark as complete the habit with a click
 habitList.addEventListener("click", function(event) {
   const index = event.target.dataset.index;
@@ -91,9 +111,24 @@ function loadHabits () {
   const savedHabits = localStorage.getItem("habits");
   if (savedHabits !== null) {
     habits = JSON.parse(savedHabits);
-    totalSpan.textContent = habits.lenght;
+    totalSpan.textContent = habits.length;
     renderHabits();
   }
 }
 //load habits once the page has refreshed
 document.addEventListener('DOMContentLoaded', loadHabits);
+//filter by pending
+pendingBtn.addEventListener("click", function() {
+  currentFilter = "pending";
+  renderHabits();
+});
+//filter by all
+allBtn.addEventListener("click", function() {
+  currentFilter = "all";
+  renderHabits();
+});
+//filter by completed
+completedBtn.addEventListener("click", function() {
+  currentFilter = "completed";
+  renderHabits();
+});
