@@ -10,7 +10,6 @@ const allBtn = document.getElementById("allBtn");
 const pendingBtn = document.getElementById("pendingBtn");
 const completedBtn = document.getElementById("completedBtn");
 
-//function to render expenses but with foreach loop instead of for loop
 function renderHabits() {
   habitList.innerHTML = "";
   let filteredHabits = habits;
@@ -32,8 +31,52 @@ function renderHabits() {
 
     const li = document.createElement("li");
     const delHabit = document.createElement("button");
+    const editHabit = document.createElement("button");
 
     delHabit.textContent = "Delete";
+    editHabit.textContent = "Edit";
+
+    editHabit.addEventListener("click", function(event) {
+      event.stopPropagation();
+
+      habits.forEach(function(h) {
+        h.editing = false;
+      });
+
+      habits[realIndex].editing = true;
+      saveHabits();
+      renderHabits();
+    });
+
+    if (habit.editing) {
+      const editInput = document.createElement("input");
+      editInput.value = habit.name;
+      li.appendChild(editInput);
+
+      editInput.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          const newValue = editInput.value.trim();
+
+          if (newValue !== "") {
+            habits[realIndex].name = newValue;
+            habits[realIndex].editing = false;
+            saveHabits();
+            renderHabits();
+          }
+        }
+      });
+    } else {
+      const textSpan = document.createElement("span");
+      textSpan.textContent = `Habit: ${habit.name} - ${habit.completed ? "Done" : "Pending"}`;
+
+      if (habit.completed) {
+        textSpan.style.textDecoration = "line-through";
+        textSpan.style.color = "gray";
+      }
+
+      li.appendChild(textSpan);
+    }
+
     delHabit.addEventListener("click", function(event) {
       event.stopPropagation();
       habits.splice(realIndex, 1);
@@ -42,92 +85,92 @@ function renderHabits() {
       renderHabits();
     });
 
-    li.textContent = `Habit: ${habit.name} - ${habit.completed ? "Done" : "Pending"}`;
-
-    if (habit.completed) {
-      li.style.textDecoration = "line-through";
-      li.style.color = "gray";
-    }
-
     li.dataset.index = realIndex;
     li.appendChild(delHabit);
+    li.appendChild(editHabit);
     habitList.appendChild(li);
   });
 }
 
-//function to mark as complete the habit with a click
 habitList.addEventListener("click", function(event) {
-  const index = event.target.dataset.index;
+  if (event.target.tagName === "BUTTON" || event.target.tagName === "INPUT") {
+    return;
+  }
+
+  const li = event.target.closest("li");
+  if (!li) return;
+
+  const index = li.dataset.index;
+
   if (index !== undefined) {
     habits[index].completed = !habits[index].completed;
     saveHabits();
     renderHabits();
   }
 });
-// function to update total and print expense with array.
-function addHabit () {
+
+function addHabit() {
   const value = habitInput.value.trim();
 
   if (value !== "") {
-    //habits.push(value);
     habits.push({
       name: value,
-      completed: false
+      completed: false,
+      editing: false
     });
+
     totalSpan.textContent = habits.length;
     saveHabits();
-    renderHabits ();
+    renderHabits();
     habitInput.value = "";
-
   } else {
     alert("Enter a valid habit");
   }
 }
-//click on Add Habit, call to addHabit function.
+
 addBtn.addEventListener("click", function() {
   addHabit();
 });
 
-//click in "Delete all"
 deleteBtn.addEventListener("click", function() {
-  //clean list   
   habits = [];
   totalSpan.textContent = habits.length;
   saveHabits();
-  renderHabits ();
+  renderHabits();
 });
-//press enter to add a new habit.
+
 habitInput.addEventListener("keydown", function(event) {
-  if(event.key === "Enter") {
+  if (event.key === "Enter") {
     addHabit();
   }
 });
-// function for save habits
-function saveHabits () {
-  localStorage.setItem("habits",JSON.stringify(habits));
+
+function saveHabits() {
+  localStorage.setItem("habits", JSON.stringify(habits));
 }
-//function for load habits
-function loadHabits () {
+
+function loadHabits() {
   const savedHabits = localStorage.getItem("habits");
+
   if (savedHabits !== null) {
     habits = JSON.parse(savedHabits);
     totalSpan.textContent = habits.length;
     renderHabits();
   }
 }
-//load habits once the page has refreshed
-document.addEventListener('DOMContentLoaded', loadHabits);
-//filter by pending
+
+document.addEventListener("DOMContentLoaded", loadHabits);
+
 pendingBtn.addEventListener("click", function() {
   currentFilter = "pending";
   renderHabits();
 });
-//filter by all
+
 allBtn.addEventListener("click", function() {
   currentFilter = "all";
   renderHabits();
 });
-//filter by completed
+
 completedBtn.addEventListener("click", function() {
   currentFilter = "completed";
   renderHabits();

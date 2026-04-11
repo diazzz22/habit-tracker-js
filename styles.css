@@ -89,3 +89,16 @@ li button {
 li button:hover {
   background: #b91c1c;
 }
+
+#addBtn {
+  background: #48f135;
+}
+#deleteBtn {
+  background: #dc2626;
+}
+#addBtn:hover {
+  background: #2f9c23;
+}
+#deleteBtn:hover {
+  background: #931919;
+}
