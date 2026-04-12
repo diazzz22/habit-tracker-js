@@ -10,6 +10,7 @@ const allBtn = document.getElementById("allBtn");
 const pendingBtn = document.getElementById("pendingBtn");
 const completedBtn = document.getElementById("completedBtn");
 
+//function to render the habits
 function renderHabits() {
   habitList.innerHTML = "";
   let filteredHabits = habits;
@@ -92,6 +93,7 @@ function renderHabits() {
   });
 }
 
+//mark as completed with a click
 habitList.addEventListener("click", function(event) {
   if (event.target.tagName === "BUTTON" || event.target.tagName === "INPUT") {
     return;
@@ -108,7 +110,7 @@ habitList.addEventListener("click", function(event) {
     renderHabits();
   }
 });
-
+//function to create a new habit
 function addHabit() {
   const value = habitInput.value.trim();
 
@@ -127,28 +129,28 @@ function addHabit() {
     alert("Enter a valid habit");
   }
 }
-
+//button to add new habit.
 addBtn.addEventListener("click", function() {
   addHabit();
 });
-
+//button to delete all habits.
 deleteBtn.addEventListener("click", function() {
   habits = [];
   totalSpan.textContent = habits.length;
   saveHabits();
   renderHabits();
 });
-
+//press enter to add a new habit.
 habitInput.addEventListener("keydown", function(event) {
   if (event.key === "Enter") {
     addHabit();
   }
 });
-
+//save the current habits
 function saveHabits() {
   localStorage.setItem("habits", JSON.stringify(habits));
 }
-
+//load the current habits.
 function loadHabits() {
   const savedHabits = localStorage.getItem("habits");
 
@@ -161,16 +163,19 @@ function loadHabits() {
 
 document.addEventListener("DOMContentLoaded", loadHabits);
 
+//button of status filter. Pending
 pendingBtn.addEventListener("click", function() {
   currentFilter = "pending";
   renderHabits();
 });
 
+//button of status filter. All
 allBtn.addEventListener("click", function() {
   currentFilter = "all";
   renderHabits();
 });
 
+//button of status filter. Completed.
 completedBtn.addEventListener("click", function() {
   currentFilter = "completed";
   renderHabits();
