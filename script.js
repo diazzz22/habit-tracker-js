@@ -14,13 +14,13 @@ const completedBtn = document.getElementById("completedBtn");
 function renderHabits() {
   habitList.innerHTML = "";
   let filteredHabits = habits;
-
+//pending
   if (currentFilter === "pending") {
     filteredHabits = habits.filter(function(habit) {
       return habit.completed === false;
     });
   }
-
+//completed
   if (currentFilter === "completed") {
     filteredHabits = habits.filter(function(habit) {
       return habit.completed === true;
@@ -36,7 +36,8 @@ function renderHabits() {
 
     delHabit.textContent = "Delete";
     editHabit.textContent = "Edit";
-
+    editHabit.classList.add ("edit-btn");
+//logic of edit habit
     editHabit.addEventListener("click", function(event) {
       event.stopPropagation();
 
@@ -66,10 +67,11 @@ function renderHabits() {
           }
         }
       });
+//display habit
     } else {
       const textSpan = document.createElement("span");
       textSpan.textContent = `Habit: ${habit.name} - ${habit.completed ? "Done" : "Pending"}`;
-
+//css of mark as completed.
       if (habit.completed) {
         textSpan.style.textDecoration = "line-through";
         textSpan.style.color = "gray";
@@ -77,7 +79,7 @@ function renderHabits() {
 
       li.appendChild(textSpan);
     }
-
+//Delete the selected habit button 
     delHabit.addEventListener("click", function(event) {
       event.stopPropagation();
       habits.splice(realIndex, 1);

@@ -102,3 +102,7 @@ li button:hover {
 #deleteBtn:hover {
   background: #931919;
 }
+
+.edit-btn {
+  background: #2563eb;
+}
