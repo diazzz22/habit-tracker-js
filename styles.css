@@ -106,3 +106,8 @@ li button:hover {
 .edit-btn {
   background: #2563eb;
 }
+
+.habit-actions{
+  display: flex;
+  gap: 10px;
+}

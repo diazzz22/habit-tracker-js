@@ -33,7 +33,13 @@ function renderHabits() {
     const li = document.createElement("li");
     const delHabit = document.createElement("button");
     const editHabit = document.createElement("button");
+//Actions buttons in the list
+    const actions = document.createElement("div");
+    actions.classList.add ("habit-actions");
 
+    actions.appendChild(delHabit);
+    actions.appendChild(editHabit);
+//Define text content for the actions.
     delHabit.textContent = "Delete";
     editHabit.textContent = "Edit";
     editHabit.classList.add ("edit-btn");
@@ -89,8 +95,9 @@ function renderHabits() {
     });
 
     li.dataset.index = realIndex;
-    li.appendChild(delHabit);
-    li.appendChild(editHabit);
+/*    li.appendChild(delHabit);
+    li.appendChild(editHabit);*/
+    li.appendChild(actions);
     habitList.appendChild(li);
   });
 }
