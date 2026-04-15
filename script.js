@@ -13,6 +13,8 @@ const completedBtn = document.getElementById("completedBtn");
 //function to render the habits
 function renderHabits() {
   habitList.innerHTML = "";
+  updateFilterButtons();
+
   let filteredHabits = habits;
 //pending
   if (currentFilter === "pending") {
@@ -41,7 +43,7 @@ function renderHabits() {
     actions.appendChild(editHabit);
 //Define text content for the actions.
     delHabit.textContent = "Delete";
-    editHabit.textContent = "Edit";
+    editHabit.textContent = "✏️";
     editHabit.classList.add ("edit-btn");
 //logic of edit habit
     editHabit.addEventListener("click", function(event) {
@@ -189,3 +191,17 @@ completedBtn.addEventListener("click", function() {
   currentFilter = "completed";
   renderHabits();
 });
+
+//function to highlight the active filter.
+function updateFilterButtons(){
+  allBtn.classList.remove("active-filter");
+  completedBtn.classList.remove("active-filter");
+  pendingBtn.classList.remove("active-filter");
+  if (currentFilter === "all") {
+    allBtn.classList.add("active-filter");
+  } if (currentFilter === "completed") {
+    completedBtn.classList.add("active-filter");
+  } if (currentFilter === "pending") {
+    pendingBtn.classList.add("active-filter");
+  } 
+}
