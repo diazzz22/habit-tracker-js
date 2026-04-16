@@ -60,6 +60,11 @@ function renderHabits() {
 
     if (habit.editing) {
       const editInput = document.createElement("input");
+      //cancel button
+      const cancelButton = document.createElement("button");
+      cancelButton.textContent = "Cancel";
+      li.appendChild(cancelButton);
+
       editInput.value = habit.name;
       li.appendChild(editInput);
 
@@ -74,6 +79,12 @@ function renderHabits() {
             renderHabits();
           }
         }
+      });
+      
+      cancelButton.addEventListener("click", function(event) {
+        event.stopPropagation();
+        habits[realIndex].editing = false;
+        renderHabits();
       });
 //display habit
     } else {
