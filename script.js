@@ -19,13 +19,13 @@ function renderHabits() {
 //pending
   if (currentFilter === "pending") {
     filteredHabits = habits.filter(function(habit) {
-      return habit.completed === false;
+      return !isCompletedToday(habit);
     });
   }
 //completed
   if (currentFilter === "completed") {
     filteredHabits = habits.filter(function(habit) {
-      return habit.completed === true;
+      return isCompletedToday(habit);
     });
   }
 
@@ -89,9 +89,10 @@ function renderHabits() {
 //display habit
     } else {
       const textSpan = document.createElement("span");
-      textSpan.textContent = `Habit: ${habit.name} - ${habit.completed ? "Done" : "Pending"}`;
+      const status = isCompletedToday(habit) ? "Done" : "Pending"
+      textSpan.textContent = `Habit: ${habit.name} - ${status} - Streak: ${habit.streak}`;
 //css of mark as completed.
-      if (habit.completed) {
+      if (isCompletedToday(habit)) {
         textSpan.style.textDecoration = "line-through";
         textSpan.style.color = "gray";
       }
@@ -108,8 +109,6 @@ function renderHabits() {
     });
 
     li.dataset.index = realIndex;
-/*    li.appendChild(delHabit);
-    li.appendChild(editHabit);*/
     li.appendChild(actions);
     habitList.appendChild(li);
   });
@@ -127,7 +126,21 @@ habitList.addEventListener("click", function(event) {
   const index = li.dataset.index;
 
   if (index !== undefined) {
-    habits[index].completed = !habits[index].completed;
+    const today = getTodayString();
+    const yesterday = getDateStringDaysAgo(1);
+
+    if (habits[index].lastCompletedDate === today) {
+      habits[index].lastCompletedDate = null;
+      habits[index].streak = 0;
+    } else {
+      if (habits[index].lastCompletedDate === yesterday) {
+        habits[index].streak += 1;
+      } else {
+        habits[index].streak = 1;
+      }
+  
+    habits[index].lastCompletedDate = today;
+}
     saveHabits();
     renderHabits();
   }
@@ -139,7 +152,8 @@ function addHabit() {
   if (value !== "") {
     habits.push({
       name: value,
-      completed: false,
+      lastCompletedDate: null,
+      streak: 0,
       editing: false
     });
 
@@ -177,10 +191,17 @@ function loadHabits() {
   const savedHabits = localStorage.getItem("habits");
 
   if (savedHabits !== null) {
-    habits = JSON.parse(savedHabits);
-    totalSpan.textContent = habits.length;
-    renderHabits();
+    habits = JSON.parse(savedHabits).map(function(habit) {
+    return {
+      name: habit.name,
+     lastCompletedDate: habit.lastCompletedDate || null,
+     streak: habit.streak || 0,
+     editing: habit.editing || false
+    };
+    });
   }
+  totalSpan.textContent = habits.length;
+  renderHabits();
 }
 
 document.addEventListener("DOMContentLoaded", loadHabits);
@@ -215,4 +236,25 @@ function updateFilterButtons(){
   } if (currentFilter === "pending") {
     pendingBtn.classList.add("active-filter");
   } 
+}
+//function to get today's date
+function getTodayString () {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+//function to check if a habit is completed today
+function isCompletedToday (habit) {
+  return habit.lastCompletedDate === getTodayString();
+}
+
+//function to know what day was 
+function getDateStringDaysAgo (daysAgo) {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString().split("T")[0];
 }
