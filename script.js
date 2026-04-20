@@ -43,7 +43,7 @@ function renderHabits() {
     actions.appendChild(editHabit);
 //Define text content for the actions.
     delHabit.textContent = "Delete";
-    editHabit.textContent = "✏️";
+    editHabit.textContent = "Edit";
     editHabit.classList.add ("edit-btn");
 //logic of edit habit
     editHabit.addEventListener("click", function(event) {
@@ -89,7 +89,7 @@ function renderHabits() {
 //display habit
     } else {
       const textSpan = document.createElement("span");
-      const status = isCompletedToday(habit) ? "Done" : "Pending"
+      const status = isCompletedToday(habit) ? "Done today" : "Pending today";
       textSpan.textContent = `Habit: ${habit.name} - ${status} - Streak: ${habit.streak}`;
 //css of mark as completed.
       if (isCompletedToday(habit)) {
