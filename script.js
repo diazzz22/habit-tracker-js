@@ -28,7 +28,12 @@ function renderHabits() {
       return isCompletedToday(habit);
     });
   }
-
+  if (filteredHabits.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "No habits yet";
+    habitList.appendChild(li);
+    return;
+  }
   filteredHabits.forEach(function(habit) {
     const realIndex = habits.indexOf(habit);
 
