@@ -14,6 +14,7 @@ const completedBtn = document.getElementById("completedBtn");
 function renderHabits() {
   habitList.innerHTML = "";
   updateFilterButtons();
+  updateSummary();
 
   let filteredHabits = habits;
 //pending
@@ -262,4 +263,11 @@ function getDateStringDaysAgo (daysAgo) {
   const date = new Date();
   date.setDate(date.getDate() - daysAgo);
   return date.toISOString().split("T")[0];
+}
+
+//function to calculate the total number of habits completed  today
+function updateSummary () {
+  const completedToday = habits.filter(isCompletedToday).length;
+  const totalHabits = habits.length;
+  totalSpan.textContent = `${completedToday}/${totalHabits}`;
 }
