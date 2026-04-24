@@ -85,6 +85,10 @@ function renderHabits() {
             renderHabits();
           }
         }
+        if (event.key === "Escape") {
+          habits[realIndex].editing = false;
+          renderHabits();
+        }
       });
       
       cancelButton.addEventListener("click", function(event) {
@@ -271,3 +275,4 @@ function updateSummary () {
   const totalHabits = habits.length;
   totalSpan.textContent = `${completedToday}/${totalHabits}`;
 }
+
