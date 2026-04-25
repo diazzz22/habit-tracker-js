@@ -137,20 +137,16 @@ habitList.addEventListener("click", function(event) {
 
   if (index !== undefined) {
     const today = getTodayString();
-    const yesterday = getDateStringDaysAgo(1);
+    
 
-    if (habits[index].lastCompletedDate === today) {
-      habits[index].lastCompletedDate = null;
-      habits[index].streak = 0;
+    if (habits[index].completedDates.includes(today)) {
+      habits[index].completedDates = habits[index].completedDates.filter(function(date) {
+        return date !== today;
+      });
     } else {
-      if (habits[index].lastCompletedDate === yesterday) {
-        habits[index].streak += 1;
-      } else {
-        habits[index].streak = 1;
-      }
-  
-    habits[index].lastCompletedDate = today;
-}
+     habits[index].completedDates.push(today);
+    }
+    habits[index].streak = calculateStreak(habits[index]);
     saveHabits();
     renderHabits();
   }
@@ -162,7 +158,7 @@ function addHabit() {
   if (value !== "") {
     habits.push({
       name: value,
-      lastCompletedDate: null,
+      completedDates: [],
       streak: 0,
       editing: false
     });
@@ -202,13 +198,17 @@ function loadHabits() {
 
   if (savedHabits !== null) {
     habits = JSON.parse(savedHabits).map(function(habit) {
-    return {
-      name: habit.name,
-     lastCompletedDate: habit.lastCompletedDate || null,
-     streak: habit.streak || 0,
-     editing: habit.editing || false
-    };
-    });
+      const normalizedHabit = {
+        name: habit.name,
+        completedDates: habit.completedDates || (habit.lastCompletedDate ? [habit.lastCompletedDate] : []),
+        streak: 0,
+        editing: habit.editing || false
+  };
+
+  normalizedHabit.streak = calculateStreak(normalizedHabit);
+  return normalizedHabit;
+});
+
   }
   totalSpan.textContent = habits.length;
   renderHabits();
@@ -259,14 +259,19 @@ function getTodayString () {
 
 //function to check if a habit is completed today
 function isCompletedToday (habit) {
-  return habit.lastCompletedDate === getTodayString();
+  return habit.completedDates.includes(getTodayString());
 }
 
 //function to know what day was 
-function getDateStringDaysAgo (daysAgo) {
+function getDateStringDaysAgo(daysAgo) {
   const date = new Date();
   date.setDate(date.getDate() - daysAgo);
-  return date.toISOString().split("T")[0];
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 //function to calculate the total number of habits completed  today
@@ -276,3 +281,30 @@ function updateSummary () {
   totalSpan.textContent = `${completedToday}/${totalHabits}`;
 }
 
+//function to calculate streak
+function calculateStreak (habit) {
+  const today = getTodayString();
+  const yesterday = getDateStringDaysAgo(1);
+  
+  let streak = 0;
+  let daysAgo = 0;
+
+  if (!habit.completedDates.includes(today)) {
+    if (!habit.completedDates.includes(yesterday)){
+      return 0;
+    }
+    daysAgo = 1;
+  }
+
+  while (true) {
+    const dateToCheck = getDateStringDaysAgo(daysAgo);
+
+    if (habit.completedDates.includes(dateToCheck)) {
+      streak += 1;
+      daysAgo += 1;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
