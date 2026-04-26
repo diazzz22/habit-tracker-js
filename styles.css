@@ -72,7 +72,7 @@ ul {
 li {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
@@ -113,6 +113,35 @@ li button:hover {
 .habit-actions{
   display: flex;
   gap: 10px;
+}
+
+.habit-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(10, 14px);
+  gap: 6px;
+}
+
+.heatmap-day {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: #d1d5db;
+}
+
+.completed-day {
+  background: #22c55e;
+}
+
+.heatmap-day.today {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 2px;
 }
 
 .active-filter {

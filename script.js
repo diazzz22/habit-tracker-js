@@ -17,6 +17,7 @@ function renderHabits() {
   updateSummary();
 
   let filteredHabits = habits;
+  const last30Days = getLast30Days();
 //pending
   if (currentFilter === "pending") {
     filteredHabits = habits.filter(function(habit) {
@@ -98,16 +99,39 @@ function renderHabits() {
       });
 //display habit
     } else {
+      const habitContent = document.createElement("div");
+      const heatmap = document.createElement("div");
       const textSpan = document.createElement("span");
       const status = isCompletedToday(habit) ? "Done today" : "Pending today";
+
+      habitContent.classList.add("habit-content");
+      heatmap.classList.add("heatmap");
       textSpan.textContent = `Habit: ${habit.name} - ${status} - Streak: ${habit.streak}`;
-//css of mark as completed.
+
       if (isCompletedToday(habit)) {
         textSpan.style.textDecoration = "line-through";
         textSpan.style.color = "gray";
       }
 
-      li.appendChild(textSpan);
+      last30Days.forEach(function(date) {
+        const dayCell = document.createElement("div");
+        dayCell.classList.add("heatmap-day");
+
+        if (habit.completedDates.includes(date)) {
+          dayCell.classList.add("completed-day");
+        }
+
+        if (date === getTodayString()) {
+          dayCell.classList.add("today");
+        }
+
+        dayCell.title = date;
+        heatmap.appendChild(dayCell);
+      });
+
+      habitContent.appendChild(textSpan);
+      habitContent.appendChild(heatmap);
+      li.appendChild(habitContent);
     }
 //Delete the selected habit button 
     delHabit.addEventListener("click", function(event) {
@@ -279,6 +303,16 @@ function updateSummary () {
   const completedToday = habits.filter(isCompletedToday).length;
   const totalHabits = habits.length;
   totalSpan.textContent = `${completedToday}/${totalHabits}`;
+}
+
+function getLast30Days() {
+  const days = [];
+
+  for (let daysAgo = 29; daysAgo >= 0; daysAgo -= 1) {
+    days.push(getDateStringDaysAgo(daysAgo));
+  }
+
+  return days;
 }
 
 //function to calculate streak
