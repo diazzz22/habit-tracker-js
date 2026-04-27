@@ -40,8 +40,33 @@ function renderHabits() {
     const realIndex = habits.indexOf(habit);
 
     const li = document.createElement("li");
+    const toggleHabit = document.createElement("button");
     const delHabit = document.createElement("button");
     const editHabit = document.createElement("button");
+//toggleHabit logic
+    toggleHabit.classList.add("toggle-habit");
+    toggleHabit.innerHTML = isCompletedToday(habit) ? "&check;" : "";
+    if (isCompletedToday(habit)) {
+      toggleHabit.classList.add("completed-toggle");
+    }
+    li.appendChild(toggleHabit);
+    toggleHabit.addEventListener("click", function(event) {
+      event.stopPropagation();
+
+      const today = getTodayString();
+
+      if (habits[realIndex].completedDates.includes(today)) {
+        habits[realIndex].completedDates = habits[realIndex].completedDates.filter(function(date) {
+        return date !== today;
+      });
+      } else {
+        habits[realIndex].completedDates.push(today);
+      }
+
+  habits[realIndex].streak = calculateStreak(habits[realIndex]);
+  saveHabits();
+  renderHabits();
+});
 //Actions buttons in the list
     const actions = document.createElement("div");
     actions.classList.add ("habit-actions");
@@ -148,33 +173,7 @@ function renderHabits() {
   });
 }
 
-//mark as completed with a click
-habitList.addEventListener("click", function(event) {
-  if (event.target.tagName === "BUTTON" || event.target.tagName === "INPUT") {
-    return;
-  }
 
-  const li = event.target.closest("li");
-  if (!li) return;
-
-  const index = li.dataset.index;
-
-  if (index !== undefined) {
-    const today = getTodayString();
-    
-
-    if (habits[index].completedDates.includes(today)) {
-      habits[index].completedDates = habits[index].completedDates.filter(function(date) {
-        return date !== today;
-      });
-    } else {
-     habits[index].completedDates.push(today);
-    }
-    habits[index].streak = calculateStreak(habits[index]);
-    saveHabits();
-    renderHabits();
-  }
-});
 //function to create a new habit
 function addHabit() {
   const value = habitInput.value.trim();

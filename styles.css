@@ -147,3 +147,23 @@ li button:hover {
 .active-filter {
   background: #19439d;
 }
+
+.toggle-habit {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid #22c55e;
+  background: white;
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.completed-toggle {
+  background: #22c55e;
+  color: white;
+}
