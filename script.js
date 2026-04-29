@@ -44,6 +44,8 @@ function renderHabits() {
     const delHabit = document.createElement("button");
     const editHabit = document.createElement("button");
 //toggleHabit logic
+    li.classList.add("habit-item");
+    li.style.animationDelay = `${realIndex * 60}ms`;
     toggleHabit.classList.add("toggle-habit");
     toggleHabit.innerHTML = isCompletedToday(habit) ? "&check;" : "";
     if (isCompletedToday(habit)) {
