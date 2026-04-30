@@ -215,25 +215,44 @@ habitInput.addEventListener("keydown", function(event) {
 });
 //save the current habits
 function saveHabits() {
-  localStorage.setItem("habits", JSON.stringify(habits));
+  try {
+    localStorage.setItem("habits", JSON.stringify(habits));
+  } catch (error) {
+    console.error("Could not save habits in localStorage.", error);
+    alert("Your habits could not be saved.");
+  }
 }
 //load the current habits.
 function loadHabits() {
   const savedHabits = localStorage.getItem("habits");
 
   if (savedHabits !== null) {
-    habits = JSON.parse(savedHabits).map(function(habit) {
-      const normalizedHabit = {
-        name: habit.name,
-        completedDates: habit.completedDates || (habit.lastCompletedDate ? [habit.lastCompletedDate] : []),
-        streak: 0,
-        editing: habit.editing || false
-  };
+    try {
+      const parsedHabits = JSON.parse(savedHabits);
 
-  normalizedHabit.streak = calculateStreak(normalizedHabit);
-  return normalizedHabit;
-});
+      if (!Array.isArray(parsedHabits)) {
+        throw new Error("Stored habits must be an array.");
+      }
 
+      habits = parsedHabits.map(function(habit) {
+        const normalizedHabit = {
+          name: typeof habit.name === "string" ? habit.name : "Untitled habit",
+          completedDates: Array.isArray(habit.completedDates)
+            ? habit.completedDates
+            : (habit.lastCompletedDate ? [habit.lastCompletedDate] : []),
+          streak: 0,
+          editing: Boolean(habit.editing)
+        };
+
+        normalizedHabit.streak = calculateStreak(normalizedHabit);
+        return normalizedHabit;
+      });
+    } catch (error) {
+      console.error("Could not load habits from localStorage.", error);
+      localStorage.removeItem("habits");
+      habits = [];
+      alert("Saved habits were corrupted and have been reset.");
+    }
   }
   totalSpan.textContent = habits.length;
   renderHabits();
