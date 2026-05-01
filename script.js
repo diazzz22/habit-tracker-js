@@ -32,7 +32,22 @@ function renderHabits() {
   }
   if (filteredHabits.length === 0) {
     const li = document.createElement("li");
-    li.textContent = "No habits yet";
+    let emptymessage = "";
+
+    if (habits.length === 0) {
+      emptymessage = "No habits yet";
+    }
+    if (currentFilter === "pending" && habits.length > 0) {
+      emptymessage = "No pending habits for today";
+    }
+    if (currentFilter === "completed" && habits.length > 0) {
+      emptymessage = "No completed habits for today";
+    }
+    if (currentFilter === "all" && habits.length > 0) {
+      emptymessage = "No habits match this filter";
+    }
+    
+    li.textContent = emptymessage;
     habitList.appendChild(li);
     return;
   }
