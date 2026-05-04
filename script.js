@@ -32,22 +32,7 @@ function renderHabits() {
   }
   if (filteredHabits.length === 0) {
     const li = document.createElement("li");
-    let emptymessage = "";
-
-    if (habits.length === 0) {
-      emptymessage = "No habits yet";
-    }
-    if (currentFilter === "pending" && habits.length > 0) {
-      emptymessage = "No pending habits for today";
-    }
-    if (currentFilter === "completed" && habits.length > 0) {
-      emptymessage = "No completed habits for today";
-    }
-    if (currentFilter === "all" && habits.length > 0) {
-      emptymessage = "No habits match this filter";
-    }
-    
-    li.textContent = emptymessage;
+    li.textContent = getEmptyMessage();
     habitList.appendChild(li);
     return;
   }
@@ -376,4 +361,21 @@ function calculateStreak (habit) {
     }
   }
   return streak;
+}
+
+function getEmptyMessage () {
+  if (habits.length === 0) {
+    return "No habits yet";
+  }
+
+  if (currentFilter === "pending") {
+    return "No pending habits for today";
+  }
+
+  if (currentFilter === "completed") {
+    return "No completed habits for today";
+  }
+
+    return  "No habits match this filter";
+    
 }
